@@ -1,0 +1,28 @@
+Проверка ACL на ВМ mephi-2026.domain.local
+
+$ getfacl /data/mephi-2026
+# owner: root
+# group: developers
+user::rwx
+group::rwx
+group:curators:r-x
+mask::rwx
+other::---
+default:user::rwx
+default:group::rwx
+default:group:curators:r-x
+default:group:developers:rwx
+default:mask::rwx
+default:other::---
+
+Участники:
+user1 uid=5501; user2 uid=5502; user3 uid=5503; все состоят в developers (gid 4445).
+curator1 uid=5504 и curator2 uid=5505 состоят в curators (gid 4444).
+
+Проверка доступа:
+- user1 создал u1.txt; user2 создал u2.txt; user3 дописал в u1.txt; user1 дописал в u2.txt — все команды завершились с rc=0.
+- curator1 прочитал u1.txt; curator2 прочитал u2.txt — команды завершились с rc=0.
+- Запись кураторами в файл, создание и удаление файла отклонены: «Отказано в доступе» (rc=1).
+- nobody не смог прочитать файл или открыть каталог: «Отказано в доступе».
+
+Проверка выполнялась на ВМ; тестовые файлы u1.txt и u2.txt были созданы в /data/mephi-2026. Этот файл — запись фактически полученных результатов команд getfacl, id, sudo -u и ls.

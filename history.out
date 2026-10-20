@@ -1,0 +1,87 @@
+    1  nmcli device
+    2  nmcli connection modify enp0s3 ipv4.method auto
+    3  nmcli connection modify enp1s0 ipv4.method auto
+    4  nmcli connection modify enp1s0 connection.autoconnect yes
+    5  nmcli connection up enp1s0
+    6  ping -c 4 8.8.8.8 > ~/ping.out
+    7  cat ping.out 
+    8  hostnamectl set-hostname mephi-2026.domain.local
+    9  ping 8.8.8.8
+   10  root
+   11  hostnamectl --static; cat /etc/os-release | head -3; getenforce; lsblk; ip -4 -br a; id
+   12  clear; ls -la ~; history | wc -l; cat ~/ping.out | tail -4; mkdir -p /root/bak; cp -a /etc/fstab /etc/passwd /etc/shadow /etc/group /etc/login.defs /etc/security /etc/pam.d /root/bak/; echo done
+   13  clear; dnf -y update 2>&1 | tail -15; echo UPD_DONE
+   14  echo ALIVE-$((6*7))
+   15  pwd
+   16  dnf -y install nginx libcap-ng-utils
+   17  cd /tmp
+   18  dnf download tcpdump
+   19  ls /tmp
+   20  ls *.rpm
+   21  rpm -ivh tcpdump-4.99.5-1.red80.x86_64.rpm
+   22  cd ~
+   23  dnf history > ~/dnf.out
+   24  cat dnf.out
+   25  parted -s /dev/vdb mklabel msdos mkpart primary ext4 1MiB 100%
+   26  mkfs.ext4 -L MEPHI_WEB /dev/vdb1
+   27  mkdir /mephi-web
+   28  echo "LABEL=MEPHI_WEB /mephi-web ext4 defaults 0 2" >> /etc/fstab
+   29  systemctl daemon-reload
+   30  mount /mephi-web
+   31  cat /etc/fstab; df -h /mephi-web
+   32  grep -n root /etc/nginx/nginx.conf
+   33  cp /etc/nginx/nginx.conf /root/bak/nginx.conf
+   34  sed -i '41s|/usr/share/nginx/html|/mephi-web|' /etc/nginx/nginx.conf
+   35  echo "Hello from Student: 374393" > /mephi-web/index.html
+   36  semanage fcontext -a -t httpd_sys_content_t "/mephi-web(/.*)?"
+   37  dnf -y install policycoreutils-python-utils
+   38  semanage fcontext -a -t httpd_sys_content_t "/mephi-web(/.*)?"
+   39  restorecon -Rv /mephi-web
+   40  nginx -t
+   41  systemctl enable --now nginx
+   42  curl http://localhost/
+   43  groupadd -g 4444 curators
+   44  groupadd developers
+   45  for i in 1 2 3; do useradd -u 550$i -G developers user$i; done
+   46  for i in 1 2; do useradd -g curators curator$i; done
+   47  id user1; id user3; id curator2
+   48  mkdir -p /data/mephi-2026
+   49  chgrp developers /data/mephi-2026
+   50  chmod 2770 /data/mephi-2026
+   51  setfacl -m g:curators:rX /data/mephi-2026
+   52  setfacl -d -m u::rwX,g::rwX,g:developers:rwX,g:curators:rX,o::- /data/mephi-2026
+   53  getfacl /data/mephi-2026
+   54  sudo -u user1 sh -c 'echo a > /data/mephi-2026/f1'
+   55  sudo -u user2 sh -c 'echo b >> /data/mephi-2026/f1'; sudo -u curator1 cat /data/mephi-2026/f1; sudo -u curator1 sh -c 'echo c >> /data/mephi-2026/f1'; sudo -u curator1 ls /data/mephi-2026; sudo -u nobody cat /data/mephi-2026/f1
+   56  rm /data/mephi-2026/f1
+   57  rm -f /data/mephi-2026/f1
+   58  ls -l /usr/sbin/tcpdump; getcap /usr/sbin/tcpdump
+   59  setcap cap_net_raw,cap_net_admin+ep /usr/sbin/tcpdump
+   60  getcap /usr/sbin/tcpdump
+   61  sudo -u user1 tcpdump -c 2 -i any
+   62  grep -n access /etc/pam.d/login /etc/pam.d/system-auth /etc/pam.d/password-auth
+   63  cat /etc/pam.d/login
+   64  sed -i '/pam_nologin.so/a account    required     pam_access.so' /etc/pam.d/login
+   65  echo "-:curators:LOCAL" >> /etc/security/access.conf
+   66  usermod -s /sbin/nologin curator1; usermod -s /sbin/nologin curator2
+   67  grep -n access /etc/pam.d/login; tail -2 /etc/security/access.conf
+   68  grep -n "^PASS_" /etc/login.defs; grep -n minlen /etc/security/pwquality.conf
+   69  sed -i 's/^PASS_MAX_DAYS.*/PASS_MAX_DAYS   90/' /etc/login.defs
+   70  sed -i 's/^# minlen = 8/minlen = 12/' /etc/security/pwquality.conf
+   71  for u in user1 user2 user3 curator1 curator2; do chage -M 90 $u; done
+   72  grep -n "^PASS_MAX" /etc/login.defs; grep -n "^minlen" /etc/security/pwquality.conf; chage -l user1 | grep Макс
+   73  reboot
+   74  whoami; hostname; getenforce
+   75  history | wc -l; wc -l ~/.bash_history; df -h /mephi-web | tail -1; systemctl is-enabled nginx; curl http://localhost/; getcap /usr/sbin/tcpdump
+   76  stat /data/mephi-2026 > ~/stat.out
+   77  stat /mephi-web >> ~/stat.out
+   78  getcap /usr/sbin/tcpdump > ~/getcap.out
+   79  dnf history > ~/dnf.out
+   80  journalctl -u nginx -b > ~/journalctl.out
+   81  getenforce > ~/getenforce.out
+   82  curl http://localhost/ > ~/curl.out
+   83  ping -c 4 8.8.8.8 > ~/ping.out
+   84  cat journalctl.out
+   85  systemctl is-active firewalld; which python3 nc ncat
+   86  mkdir /root/out; cp ~/*.out /root/out; cp /etc/fstab /etc/passwd /etc/shadow /etc/group /etc/security/pwquality.conf /root/out; ls /root/out
+   87  history > ~/history.out

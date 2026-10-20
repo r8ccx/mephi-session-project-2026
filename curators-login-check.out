@@ -1,0 +1,14 @@
+Проверка настройки локального входа для кураторов на ВМ mephi-2026.domain.local
+
+$ grep -n pam_access /etc/pam.d/login
+5:account required pam_access.so
+
+$ grep -n curators /etc/security/access.conf
+123:-:curators:LOCAL
+
+$ getent passwd curator1 curator2 user1
+curator1:x:5504:4444::/home/curator1:/sbin/nologin
+curator2:x:5505:4444::/home/curator2:/sbin/nologin
+user1:x:5501:5501::/home/user1:/bin/bash
+
+Что подтверждено: для login включён pam_access; правило access.conf запрещает локальные входы членам группы curators; для curator1/curator2 задана оболочка /sbin/nologin, у обычного пользователя user1 — /bin/bash.

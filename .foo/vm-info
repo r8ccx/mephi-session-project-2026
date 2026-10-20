@@ -1,0 +1,27 @@
+=== KVM/VM AGENT HANDBOOK: RED OS 8 CLI ===
+
+1. VM METADATA
+- VM Name (virsh): redos-mephi
+- Guest Hostname: mephi-2026.domain.local
+- OS: RED OS 8 Server (FSTEC, No GUI, RPM-based)
+- Specs: 1 vCPU, 1536 MB RAM
+- Storage (qcow2):
+  * /var/lib/libvirt/images/redos-root.qcow2 -> mapped to /dev/vda (15G, OS)
+  * /var/lib/libvirt/images/redos-data.qcow2 -> mapped to /dev/vdb (5G, Projects)
+
+2. HOST CLI MANAGEMENT (Run on Ubuntu Host)
+- Check status: sudo virsh list --all
+- Boot VM:      sudo virsh start redos-mephi
+- Shutdown VM:  sudo virsh shutdown redos-mephi
+- Kill/Stop VM: sudo virsh destroy redos-mephi
+- Toggle Boot:  sudo virsh autostart redos-mephi [--disable]
+
+3. CONSOLE INTERACTION
+- Connect to CLI: sudo virsh console redos-mephi
+  *Note: Press [ENTER] after running to view login prompt.*
+- Disconnect Escape Hotkey: Ctrl + ]
+  *Note: Keeps VM alive in background.*
+
+4. NETWORK DETAILS
+- Mode: NAT via libvirt default network (192.168.122.0/24)
+- Guest IP Discovery (from host): sudo virsh domifaddr redos-mephi
